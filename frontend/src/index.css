@@ -1,0 +1,234 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Colour tokens, as "R G B" so Tailwind can add opacity. The app follows
+   the system appearance: light by default, dark when the device is set to
+   dark. Tailwind's colour names (ink, paper, risk-*) map onto these in
+   tailwind.config.js. */
+:root {
+  /* Light: Apple's grouped background, white cards, near-black text. */
+  --ink: 242 242 247;
+  --ink-raised: 255 255 255;
+  --ink-hover: 232 232 237;
+  --ink-edge: 210 210 215;
+  --paper: 29 29 31;
+  --muted: 81 81 84;
+  --faint: 110 110 115;
+  /* Darker than the usual system colours so they pass contrast as text on
+     white. */
+  --risk-safe: 31 127 56;
+  --risk-caution: 178 80 0;
+  --risk-danger: 215 0 21;
+  /* The mascot's visor stays dark in both appearances so its white eyes
+     always show. */
+  --visor: 29 29 31;
+
+  --card-shadow: 0 0 0 1px rgb(0 0 0 / 0.04), 0 1px 2px rgb(0 0 0 / 0.04),
+    0 6px 20px -6px rgb(0 0 0 / 0.08);
+  --material: rgb(242 242 247 / 0.72);
+  --material-edge: rgb(0 0 0 / 0.08);
+  --segment-thumb: 255 255 255;
+  --segment-shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 2px 6px rgb(0 0 0 / 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: 10 10 12;
+    --ink-raised: 28 28 30;
+    --ink-hover: 44 44 46;
+    --ink-edge: 56 56 58;
+    --paper: 245 245 247;
+    --muted: 161 161 166;
+    --faint: 134 134 139;
+    --risk-safe: 48 209 88;
+    --risk-caution: 255 159 10;
+    --risk-danger: 255 69 58;
+    --visor: 10 10 12;
+
+    /* On a dark background, a faint light edge reads as depth better
+       than a shadow does. */
+    --card-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06), 0 8px 24px -8px rgb(0 0 0 / 0.6);
+    --material: rgb(10 10 12 / 0.7);
+    --material-edge: rgb(255 255 255 / 0.08);
+    --segment-thumb: 72 72 76;
+    --segment-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+  }
+}
+
+/* More contrast when the user asks for it: firmer edges, and the faintest
+   text raised to the secondary text colour. */
+@media (prefers-contrast: more) {
+  :root {
+    --ink-edge: 120 120 128;
+    --faint: var(--muted);
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: light dark;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-ink text-base text-paper;
+    min-height: 100dvh;
+  }
+
+  /* One focus style for the whole app. An outline follows the element's
+     rounded corners and needs no background colour to sit on. */
+  :focus-visible {
+    outline: 2px solid rgb(var(--paper) / 0.75);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    @apply bg-paper/20;
+  }
+
+  /* Phones zoom into any field with text under 16px and don't zoom back. */
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+
+  /* Taps fire straight away, and holding a finger on a control doesn't
+     select its label. Content text stays selectable. */
+  a,
+  button,
+  label,
+  summary,
+  [role="tab"] {
+    touch-action: manipulation;
+  }
+  button,
+  summary,
+  [role="tab"] {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Figures line up in tables and meters. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  figcaption {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  /* Press feedback lands the moment a finger or button goes down, not on
+     release. */
+  .press {
+    transition-property: transform, background-color, border-color, color, box-shadow, opacity;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+  .press:active {
+    transform: scale(0.97);
+    transition-duration: 100ms;
+  }
+
+  /* The two button styles. Capsules, like system buttons. The main action
+     is filled with the text colour; the secondary one is a soft grey
+     fill. */
+  .btn-primary {
+    @apply press inline-flex items-center justify-center gap-2 rounded-full bg-paper px-5 py-2.5 text-small font-semibold text-ink hover:bg-paper/85 disabled:cursor-not-allowed disabled:bg-paper/40 disabled:active:scale-100;
+  }
+  .btn-secondary {
+    @apply press inline-flex items-center justify-center gap-2 rounded-full bg-paper/[0.07] px-5 py-2.5 text-small font-medium text-paper hover:bg-paper/[0.12];
+  }
+
+  /* A raised card. Light mode uses a soft shadow, dark mode a faint light
+     edge. */
+  .surface {
+    @apply rounded-2xl bg-ink-raised;
+    box-shadow: var(--card-shadow);
+  }
+
+  /* An error message, tinted rather than outlined. */
+  .callout-danger {
+    @apply flex gap-3 rounded-xl bg-risk-danger/10 px-4 py-3 text-small text-paper;
+    box-shadow: inset 0 0 0 1px rgb(var(--risk-danger) / 0.2);
+  }
+
+  /* Translucent bar. Content scrolls underneath it, blurred. */
+  .material {
+    background-color: var(--material);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+  }
+
+  /* Segmented control: a grey track with a raised thumb that slides to the
+     selected option. */
+  .segment-track {
+    @apply relative flex rounded-[0.6rem] bg-paper/[0.07] p-[3px];
+  }
+  .segment-thumb {
+    @apply absolute bottom-[3px] top-[3px] rounded-lg;
+    background-color: rgb(var(--segment-thumb));
+    box-shadow: var(--segment-shadow);
+  }
+
+  /* A soft light that follows the pointer. The position comes from --x and
+     --y, set on pointermove. Without a pointer it sits in the centre. */
+  .spotlight {
+    background-image: radial-gradient(
+      420px circle at var(--x, 50%) var(--y, 50%),
+      rgb(var(--paper) / 0.05),
+      transparent 60%
+    );
+  }
+
+  /* A soft light behind the upload page heading. It fades out on every
+     side, so it has no hard edge against the header. */
+  .hero-glow {
+    background-image: radial-gradient(
+      ellipse 50% 55% at 50% 40%,
+      rgb(var(--paper) / 0.06),
+      transparent 70%
+    );
+  }
+
+  /* Stroke that animates in with animate-draw; needs pathLength="1". */
+  .stroke-draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+}
+
+/* Solid bars instead of see-through ones when the user asks for less
+   transparency. */
+@media (prefers-reduced-transparency: reduce) {
+  .material {
+    background-color: rgb(var(--ink));
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

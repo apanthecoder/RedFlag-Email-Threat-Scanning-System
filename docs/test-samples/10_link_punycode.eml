@@ -1,0 +1,33 @@
+Subject: Confirm your details
+From: Support <support@supplier-example.com>
+To: clerk@qrsolution.com.my
+Date: Wed, 23 Sep 2026 10:31:45 -0000
+Message-ID: <179015950543.8988.3434079714387318609@LAPTOP-UUMMU8UR.lan>
+Authentication-Results: spf=pass smtp.mailfrom=supplier-example.com; dkim=pass
+ header.d=supplier-example.com; dmarc=pass
+Received: from mail.internal.corp (mail.internal.corp [10.0.0.5]) by
+ mx.recipientmail.com with ESMTP id abc123; Wed, 23 Sep 2026 10:31:45 -0000
+Received: from mx-relay.sender.com (mx-relay.sender.com [93.184.216.34]) by
+ mail.internal.corp with ESMTP id def456; Wed, 23 Sep 2026 10:31:45 -0000
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="===============4459345413212643304=="
+
+--===============4459345413212643304==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+Please confirm your details to keep your account active.
+
+https://xn--pypal-4ve.com/verify
+
+--===============4459345413212643304==
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<html><body><p>Please confirm your details to keep your account active.</p><p=
+><a href=3D"https://xn--pypal-4ve.com/verify">Confirm now</a></p></body></htm=
+l>
+
+--===============4459345413212643304==--

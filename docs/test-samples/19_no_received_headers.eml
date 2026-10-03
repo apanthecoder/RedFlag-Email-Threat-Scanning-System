@@ -1,0 +1,10 @@
+Subject: Saved message with no delivery chain
+From: Sender <sender@supplier-example.com>
+To: clerk@qrsolution.com.my
+Date: Wed, 23 Sep 2026 10:31:45 -0000
+Message-ID: <179015950567.8988.5884913464775089096@LAPTOP-UUMMU8UR.lan>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+
+This message has no Received headers, as if saved directly to disk.

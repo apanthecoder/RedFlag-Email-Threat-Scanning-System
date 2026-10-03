@@ -1,0 +1,33 @@
+Subject: Site photos for week 6
+From: Azman <azman@supplier-example.com>
+To: clerk@qrsolution.com.my
+Date: Sun, 27 Sep 2026 18:20:31 -0000
+Message-ID: <179053323120.22412.10106115914896334504@LAPTOP-UUMMU8UR>
+Authentication-Results: spf=pass smtp.mailfrom=supplier-example.com; dkim=pass
+ header.d=supplier-example.com; dmarc=pass
+Received: from mail.internal.corp (mail.internal.corp [10.0.0.5]) by
+ mx.recipientmail.com with ESMTP id abc123; Sun, 27 Sep 2026 18:20:31 -0000
+Received: from mx-relay.sender.com (mx-relay.sender.com [93.184.216.34]) by
+ mail.internal.corp with ESMTP id def456; Sun, 27 Sep 2026 18:20:31 -0000
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="===============3615379346232450969=="
+
+--===============3615379346232450969==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+The site photos for week 6 are in the shared folder.
+
+https://example.com/shared/week6
+
+--===============3615379346232450969==
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<html><body><p>The site photos for week 6 are in the shared folder.</p><p><a =
+href=3D"https://example.com/shared/week6">https://example.com/shared/week6</a=
+></p></body></html>
+
+--===============3615379346232450969==--

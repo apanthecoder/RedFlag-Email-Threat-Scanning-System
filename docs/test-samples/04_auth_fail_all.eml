@@ -1,0 +1,17 @@
+Subject: Updated payment instructions
+From: Accounts <accounts@supplier-example.com>
+To: clerk@qrsolution.com.my
+Date: Wed, 23 Sep 2026 10:31:45 -0000
+Message-ID: <179015950539.8988.12925241870017143242@LAPTOP-UUMMU8UR.lan>
+Authentication-Results:
+ spf=fail smtp.mailfrom=supplier-example.com; dkim=fail; dmarc=fail
+Received: from mail.internal.corp (mail.internal.corp [10.0.0.5]) by
+ mx.recipientmail.com with ESMTP id abc123; Wed, 23 Sep 2026 10:31:45 -0000
+Received: from mx-relay.sender.com (mx-relay.sender.com [93.184.216.34]) by
+ mail.internal.corp with ESMTP id def456; Wed, 23 Sep 2026 10:31:45 -0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+Please note our bank details have changed. Use the new account for all outsta=
+nding invoices.

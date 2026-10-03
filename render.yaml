@@ -1,0 +1,33 @@
+# Render Blueprint. In the Render dashboard: New > Blueprint, connect this
+# repository, then fill in the values marked "sync: false" (they are secrets,
+# so they are never committed).
+services:
+  - type: web
+    name: redflag
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: singapore
+    plan: free
+    branch: main
+    autoDeploy: true
+    healthCheckPath: /api/health
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      # Generated once by Render and kept. Signs the admin session cookie.
+      - key: SECRET_KEY
+        generateValue: true
+      # The free plan starts from an empty disk on every restart, so the
+      # admin account is recreated from these at boot.
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: VIRUSTOTAL_API_KEY
+        sync: false
+      - key: SAFE_BROWSING_API_KEY
+        sync: false
+      - key: URLSCAN_API_KEY
+        sync: false
+      - key: ABUSEIPDB_API_KEY
+        sync: false

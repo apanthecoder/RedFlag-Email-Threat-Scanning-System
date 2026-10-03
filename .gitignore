@@ -1,0 +1,31 @@
+# Secrets
+.env
+
+# Python
+.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+*.pyc
+.pytest_cache/
+backend/.pytest_cache/
+backend/logs/
+*.log
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/database/*.db
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Report material. CH4_SYSTEM_FACTS.md documents this system's security
+# weaknesses, so it stays off a public repo that points at a live site.
+CH4_SYSTEM_FACTS.md
+docs/HOSTING-RENDER-GITHUB.md
+docs/CHAPTER4-SOURCE.md
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

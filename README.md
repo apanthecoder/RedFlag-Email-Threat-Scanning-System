@@ -1,0 +1,149 @@
+# RedFlag
+
+Phishing detection and malware scanning system. A user uploads a single
+`.eml` email file; the backend parses it, queries four threat intelligence
+providers (VirusTotal, Google Safe Browsing, URLScan.io, AbuseIPDB) in
+parallel, produces a single Safe / Suspicious / Dangerous verdict, and
+generates step-by-step containment advice for a non-technical reader.
+
+Final year project (FYP4112) for QR Solution Engineering Sdn. Bhd.
+
+The `.eml` upload is the only user-facing input. URL checking and
+attachment scanning are internal sub-processes, never separate forms.
+
+## Stack
+
+- **Frontend:** React 18 + Vite, Tailwind CSS, axios, react-router-dom, recharts
+- **Backend:** Python 3.11+, Flask, `ThreadPoolExecutor` for parallel provider calls
+- **Database:** SQLite (stdlib `sqlite3`), a single file, no server process
+- **Auth:** Admin-only, bcrypt-hashed passwords, Flask session (general users are anonymous)
+
+## Getting started
+
+### 1. Configure environment
+
+```bash
+cp .env.example .env
+```
+
+Fill in `SECRET_KEY` and the four provider API keys. All four are free:
+sign up at virustotal.com, the Google Cloud Console (Safe Browsing API),
+urlscan.io and abuseipdb.com. Leave `DB_PATH` blank to use the default
+database file.
+
+In development the app starts without them, and any provider whose key is
+missing is reported as `UNAVAILABLE` on the report rather than failing the
+scan. Outside development a missing key stops the app at startup.
+
+### 2. Backend
+
+The virtual environment lives at the **repo root** (`.venv`), not inside
+`backend/` — that's what VS Code's Python extension auto-activates in new
+integrated terminals, so it's the one to keep in sync.
+
+```bash
+python -m venv .venv                 # from the repo root
+.venv\Scripts\activate                # Windows
+cd backend
+pip install -r requirements.txt
+flask --app app run --debug --port 5000
+```
+
+If you open a fresh terminal and it doesn't auto-activate `.venv`, activate
+it manually with `<repo-root>\.venv\Scripts\activate` before running
+anything backend-related — a stray second venv is how `ModuleNotFoundError`
+for an installed package sneaks in.
+
+### 3. Database
+
+```bash
+cd backend
+python -m database.init_db          # applies schema.sql (idempotent)
+python -m database.seed_admin --username admin --password "change-me"
+```
+
+Creates `backend/database/redflag.db`. Omit `--password` to have one generated
+and printed once.
+
+### 4. Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev     # http://localhost:5173
+```
+
+### 5. Verify
+
+- Backend: `GET http://localhost:5000/api/health` → `{"success": true, "data": {"status": "ok"}, "error": null}`
+- Frontend: open `http://localhost:5173` — should load without console errors.
+- Full scan pipeline (works even with no provider keys configured — missing
+  providers are marked `UNAVAILABLE` and the scan still completes):
+  ```bash
+  curl -X POST -F "file=@docs/test-samples/01_clean_no_links.eml" http://localhost:5000/api/scan
+  curl http://localhost:5000/api/scan/<scan_id>
+  ```
+
+## Tests
+
+```bash
+cd backend && pytest -v
+cd frontend && npm run lint
+```
+
+Regenerate the nineteen `.eml` fixtures in `docs/test-samples/` any time with:
+
+```bash
+cd backend && python -m scripts.generate_test_samples
+```
+
+## Project status
+
+Built incrementally, in nine phases.
+
+- [x] Phase 1 — Skeleton
+- [x] Phase 2 — Database
+- [x] Phase 3 — Parser
+- [x] Phase 4 — API clients
+- [x] Phase 5 — Orchestration and scoring
+- [x] Phase 6 — Advisory module
+- [x] Phase 7 — Frontend
+- [x] Phase 8 — Admin
+- [x] Phase 9 — Hardening and tests
+
+### Post-launch additions
+
+- **2026-08-18** — Implemented the two attachment signals left as reserved-but-unused
+  weights after Phase 5: password-protected archive detection (`PASSWORD_PROTECTED_ARCHIVE`,
+  ZIP via stdlib `zipfile`, 7z via `py7zr`) and VBA macro detection (`MACRO_ENABLED_DOCUMENT`,
+  via `oletools`). RAR is intentionally unsupported — `rarfile` needs an external
+  `unrar`/`unar` binary, not just a pip package, so a RAR attachment is still hashed
+  and VirusTotal-scanned but doesn't get this specific signal.
+
+## Deployment
+
+The app is deployed to Render as a single web service, built from the
+`Dockerfile` in this repository. Node builds the React app, Python runs
+Flask, and Flask serves that build, so the interface and the API share one
+address. Anything else would break the `SameSite=Lax` session cookies used
+by admin login and scan history.
+
+`render.yaml` describes the service. In Render: **New > Blueprint**, connect
+this repository, then fill in the values it marks as secrets:
+
+| Variable | Value |
+|---|---|
+| `ADMIN_PASSWORD` | the password for the hosted admin account |
+| `VIRUSTOTAL_API_KEY` | from virustotal.com |
+| `SAFE_BROWSING_API_KEY` | from Google Cloud Console |
+| `URLSCAN_API_KEY` | from urlscan.io |
+| `ABUSEIPDB_API_KEY` | from abuseipdb.com |
+
+`SECRET_KEY` is generated by Render. `FLASK_ENV=production` turns on secure
+cookies and makes the app refuse to start with a missing provider key.
+
+Two limits of the free plan worth knowing. The service sleeps after about
+15 minutes idle, so the first request after a quiet spell waits while it
+wakes. Its disk does not persist, so the database is recreated empty on
+every restart: the schema and the admin account are rebuilt at startup, but
+scan history and analytics do not survive.
